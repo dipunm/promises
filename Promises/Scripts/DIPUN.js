@@ -66,23 +66,33 @@ function CustomPromiseSync() {
             $('#console').text('');
         }
 
-        JSON.parse = function(data) {
-            throw Error("JSON.parse error!");
+        JSON.parse2 = function (data) {
+            throw new Error("JSON.parse error!");
         };
 
         function run() {
             xhr({
                 url: '/Promise/'
             })
-            .then(JSON.parse)
+            .then(JSON.parse2)
             .then(
                 function success(json) {
                     $('#console').append(JSON.stringify(json, null, "\t"));
+                    return json;
                 },
                 function error(error) {
                     $('#console').append(error.message);
+                    throw error;
                 }
-            );
+            )
+            .then(function(json) {
+                return xhr({
+                    url: json.locations[0]
+                });
+            })
+            .then(function(json) {
+                $('#console').append("\n" + json);
+            });
         }
 
     });
