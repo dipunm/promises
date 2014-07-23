@@ -66,6 +66,10 @@ function CustomPromiseSync() {
             $('#console').text('');
         }
 
+        JSON.parse = function(data) {
+            throw Error("JSON.parse error!");
+        };
+
         function run() {
             xhr({
                 url: '/Promise/'
