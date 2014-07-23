@@ -41,16 +41,26 @@ Q.stopUnhandledRejectionTracking();
 
 (function ($) {
     $(function () {
+        $('#trigger').click(function () {
+            clear();
+            run();
+        });
+        function clear() {
+            $('#console').text('');
+        }
+        function run() {
+            xhr({
+                url: '/Promise/'
+            }).then(
+                function success(data) {
+                    var json = JSON.parse(data);
+                    $('#console').append(JSON.stringify(json, null, "\t"));
+                },
+                function error(error) {
+                    $('#console').append(error.message);
+                }
+            );
+        }
 
-        xhr({
-            url: '/Promise/'
-        }).then(
-            function success(data) {
-                console.log(data);
-            },
-            function error(error) {
-                console.log(error.message);
-            }
-        );
     });
 })(jQuery);
