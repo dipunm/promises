@@ -39,15 +39,33 @@
 //http://stackoverflow.com/questions/17544965/unhandled-rejection-reasons-should-be-empty
 Q.stopUnhandledRejectionTracking();
 
+function CustomPromiseSync() {
+    var deferred = Q.defer();
+    deferred.resolve(1);
+    return deferred.promise;
+}
+
 (function ($) {
     $(function () {
         $('#trigger').click(function () {
-            clear();
-            run();
+            //   clear();
+            //   run();
+            numberwang();
         });
+
+        function numberwang() {
+            CustomPromiseSync().then(function (n) {
+                return n + 3;
+            }).then(function (n) {
+                $('#console').append(n);
+                $('#console').append("\n");
+            });
+        }
+
         function clear() {
             $('#console').text('');
         }
+
         function run() {
             xhr({
                 url: '/Promise/'
