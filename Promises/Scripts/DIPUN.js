@@ -48,9 +48,9 @@ function CustomPromiseSync() {
 (function ($) {
     $(function () {
         $('#trigger').click(function () {
-            //   clear();
-            //   run();
-            numberwang();
+            clear();
+            run();
+            //numberwang();
         });
 
         function numberwang() {
@@ -69,9 +69,10 @@ function CustomPromiseSync() {
         function run() {
             xhr({
                 url: '/Promise/'
-            }).then(
-                function success(data) {
-                    var json = JSON.parse(data);
+            })
+            .then(JSON.parse)
+            .then(
+                function success(json) {
                     $('#console').append(JSON.stringify(json, null, "\t"));
                 },
                 function error(error) {
