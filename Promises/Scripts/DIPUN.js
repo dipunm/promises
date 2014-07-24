@@ -91,13 +91,17 @@ function CustomPromiseSync() {
             .then(JSON.parse)
             .then(setTitle)
             .then(function(json) {
-                return Q.all(json.locations.map(function(loc) {
+                json.locations.map(function(loc) {
                     return xhr({ url: loc }).then(JSON.parse);
-                }));
-            })
-            .then(function (messages) {
-                //in order of array given to all
-                messages.forEach(printParagraph);
+                }).reduce(function(prev, next) {
+                    //this is an array of promises
+
+                    return prev.then(function() {
+                        return next; //reads: check if completed, if not wait a bit. If it has, go ahead and continue.
+                    }).then(function(txt) {
+                        printParagraph(txt);
+                    });
+                }, Q.resolve());
             })
             .catch(function(err) {
                 $('#console').append(err.message);
