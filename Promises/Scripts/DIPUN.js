@@ -90,16 +90,14 @@ function CustomPromiseSync() {
             })
             .then(JSON.parse)
             .then(setTitle)
-            .then(function (json) {
-                var promise = Q.resolve();
-                json.locations.forEach(function(loc) {
-                    promise = promise.then(function() {
-                        return xhr({
-                            url: loc
-                        }).then(printParagraph);
-                    });
-                });
-                return promise;
+            .then(function(json) {
+                return Q.all(json.locations.map(function(loc) {
+                    return xhr({ url: loc }).then(JSON.parse);
+                }));
+            })
+            .then(function (messages) {
+                //in order of array given to all
+                messages.forEach(printParagraph);
             })
             .catch(function(err) {
                 $('#console').append(err.message);
