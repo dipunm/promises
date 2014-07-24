@@ -71,10 +71,6 @@ function CustomPromiseSync() {
             $('#content').html('');
         }
 
-        JSON.parse2 = function (data) {
-            throw new Error("JSON.parse error!");
-        };
-
         function setTitle(data) {
             $('#title').text(data.title);
             return data;
@@ -94,12 +90,16 @@ function CustomPromiseSync() {
             })
             .then(JSON.parse)
             .then(setTitle)
-            .then(function(json) {
-                for (var i in json.locations) {
-                    xhr({
-                        url: json.locations[i]
-                    }).then(printParagraph);
-                }
+            .then(function (json) {
+                var promise = Q.resolve();
+                json.locations.forEach(function(loc) {
+                    promise = promise.then(function() {
+                        return xhr({
+                            url: loc
+                        }).then(printParagraph);
+                    });
+                });
+                return promise;
             })
             .catch(function(err) {
                 $('#console').append(err.message);
