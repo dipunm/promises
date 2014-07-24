@@ -61,13 +61,13 @@ namespace Promises.Controllers
         }; 
         public ActionResult Get(int id)
         {
-            if (id > 0 && id < Contents.Count)
+            if (id > 0 && id <= Contents.Count)
             {
                 // wait any time between 1 and 5 seconds before responding.
                 var r = new Random(DateTime.Now.Second);
                 Thread.Sleep(r.Next(1000, 5000));
 
-                return Json(Contents[id], JsonRequestBehavior.AllowGet);
+                return Json(Contents[id - 1], JsonRequestBehavior.AllowGet);
             }
 
             return HttpNotFound();

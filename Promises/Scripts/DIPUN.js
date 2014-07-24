@@ -48,10 +48,13 @@ function CustomPromiseSync() {
 (function ($) {
     $(function () {
         $('#trigger').click(function () {
+            $('#loading-icon').show();
             clear();
             run();
             //numberwang();
         });
+
+        hideLoader();
 
         function numberwang() {
             CustomPromiseSync().then(function (n) {
@@ -64,35 +67,44 @@ function CustomPromiseSync() {
 
         function clear() {
             $('#console').text('');
+            $('#title').text('');
+            $('#content').html('');
         }
 
         JSON.parse2 = function (data) {
             throw new Error("JSON.parse error!");
         };
 
+        function setTitle(data) {
+            $('#title').text(data.title);
+            return data;
+        }
+
+        function printParagraph(text) {
+            $('#content').append("<p>" + text + "</p>");
+        }
+
+        function hideLoader() {
+            $('#loading-icon').hide();
+        }
+
         function run() {
             xhr({
                 url: '/Promise/'
             })
-            .then(JSON.parse2)
-            .then(
-                function success(json) {
-                    $('#console').append(JSON.stringify(json, null, "\t"));
-                    return json;
-                },
-                function error(error) {
-                    $('#console').append(error.message);
-                    throw error;
+            .then(JSON.parse)
+            .then(setTitle)
+            .then(function(json) {
+                for (var i in json.locations) {
+                    xhr({
+                        url: json.locations[i]
+                    }).then(printParagraph);
                 }
-            )
-            .then(function(json) {
-                return xhr({
-                    url: json.locations[0]
-                });
             })
-            .then(function(json) {
-                $('#console').append("\n" + json);
-            });
+            .catch(function(err) {
+                $('#console').append(err.message);
+            })
+            .then(hideLoader);
         }
 
     });
