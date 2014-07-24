@@ -12,7 +12,7 @@
     var deferred = Q.defer(),
     req = new XMLHttpRequest();
 
-    req.open(options.method || 'GET', options.url, true);
+    req.open(options.method || 'GET', '/Promises' + options.url, true);
 
     // Set request headers if provided.
     Object.keys(options.headers || {}).forEach(function (key) {
@@ -91,7 +91,7 @@ function CustomPromiseSync() {
             .then(JSON.parse)
             .then(setTitle)
             .then(function(json) {
-                json.locations.map(function(loc) {
+                return json.locations.map(function(loc) {
                     return xhr({ url: loc }).then(JSON.parse);
                 }).reduce(function(prev, next) {
                     //this is an array of promises
